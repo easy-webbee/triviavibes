@@ -1,0 +1,8 @@
+<div>
+  <p [innerHTML]="question.question"></p>
+  <div>
+    @for (ans of shuffledAnswers; track $index) {
+    <button [innerHTML]="ans"></button>
+    }
+  </div>
+</div>

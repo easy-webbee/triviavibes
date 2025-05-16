@@ -1,0 +1,30 @@
+<label class="">Number Of Questions</label>
+<input
+[(ngModel)]="questions"
+  type="number"
+/>
+<app-select
+  [label]="'Select Category'"
+  [value]="dataType.triviaCategories[0].label"
+  [options]="dataType.triviaCategories"
+  (valueChange)="selectedTCategories = $event"
+/>
+<app-select
+  [label]="'Select Difficulty'"
+  [value]="dataType.triviaDifficulties[0].label"
+  [options]="dataType.triviaDifficulties"
+  (valueChange)="selectedTDifficulties = $event"
+/>
+<app-select
+  [label]="'Select Type'"
+  [value]="dataType.triviaTypes[0].label"
+  [options]="dataType.triviaTypes"
+  (valueChange)="selectedTTypes = $event"
+/>
+<button (click)="getQuestion()">start</button>
+
+@for (qs of questionLists; track $index) {
+  <app-card  [question]="qs"/>
+}
+
+
