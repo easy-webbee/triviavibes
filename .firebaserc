@@ -1,0 +1,12 @@
+{
+  "targets":{
+    "triviavibes":{
+      "hosting":{
+        "trivia":["trivia"]
+      }
+    }
+  },
+  "projects": {
+    "default": "trivia"
+  }
+}
