@@ -6,6 +6,7 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "site": "triviavibes",
     "frameworksBackend": {
       "region": "us-central1"
     }
