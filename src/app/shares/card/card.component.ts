@@ -1,4 +1,11 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { Question } from '../../models/question.model';
 
 @Component({
@@ -10,24 +17,56 @@ import { Question } from '../../models/question.model';
 })
 export class CardComponent {
   @Input() question!: Question;
+  @Output() answerSubmit = new EventEmitter<number>();
   shuffledAnswers: string[] = [];
+  duration = 15;
+  btn_disabled = signal(false)
+  timeCountDown = signal(this.duration);
+  private interval: any;
+  submitAnswer(answer: string) {
+    //compare answer
 
-  ngOnInit(): void {
-    this.shuffleAnswers();
+    //timeout no value
+
+    //get point by time left time 10
+    console.log(answer,this.question.correct_answer)
+    if(answer.includes(this.question.correct_answer)){
+      this.answerSubmit.emit(10);
+    }else{
+      this.answerSubmit.emit(0);
+    }
+    clearInterval(this.interval);
+    this.btn_disabled.set(true)
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateTime();
+    if (changes['question'] && this.question) {
+      this.shuffledAnswers = this.shuffleAnswers([
+        ...this.question.incorrect_answers,
+        this.question.correct_answer,
+      ]);
+    }
   }
 
-  shuffleAnswers(): void {
-    const allAnswers = [
-      ...this.question.incorrect_answers,
-      this.question.correct_answer,
-    ];
-    this.shuffledAnswers = this.shuffleArray(allAnswers);
-  }
-
-  shuffleArray(array: string[]): string[] {
-    return array
-      .map((value) => ({ value, sort: Math.random() }))
+  shuffleAnswers(answers: string[]): string[] {
+    return answers
+      .map((a) => ({ sort: Math.random(), value: a }))
       .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+      .map((a) => a.value);
+  }
+
+  updateTime() {
+    this.btn_disabled.set(false)
+    this.timeCountDown.set(this.duration);
+    clearInterval(this.interval);
+    let remaining = this.duration;
+    this.interval = setInterval(() => {
+      remaining--;
+      this.timeCountDown.update(() => remaining);
+      if (remaining <= 0) {
+        clearInterval(this.interval);
+        // Optionally trigger timeout logic here
+      }
+    }, 1000);
   }
 }

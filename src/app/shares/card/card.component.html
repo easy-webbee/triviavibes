@@ -1,8 +1,9 @@
 <div>
   <p [innerHTML]="question.question"></p>
+  <p>{{ timeCountDown() > 0 ? 'Time: ' + timeCountDown() + 's' : "Time's up" }}</p>
   <div>
-    @for (ans of shuffledAnswers; track $index) {
-    <button [innerHTML]="ans"></button>
+    @for (ans of this.shuffledAnswers; track $index) {
+    <button [disabled]="btn_disabled()" [innerHTML]="ans" (click)="submitAnswer(ans)"></button>
     }
   </div>
 </div>

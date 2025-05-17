@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { SelectComponent } from '../shares/select/select.component';
 import { dataType } from './../shares/select/select-option';
 import { ApiService } from '../api.service';
@@ -13,13 +13,20 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  questions = 10;
   dataType = dataType;
+  questions = 10;
   selectedTCategories = 'any';
   selectedTDifficulties = 'any';
   selectedTTypes = 'any';
-  questionLists: Question[] = [];
+  questionLists = signal<Question[]>([]);
+  currentIndex = signal(0);
+  scores = signal(0);
   constructor(private api: ApiService) {}
+
+  currentQuestion = computed(() => {
+    return this.questionLists()[this.currentIndex()];
+  });
+
   getQuestion() {
     const params: Record<string, string> = {
       amount: this.questions.toString(),
@@ -38,9 +45,31 @@ export class HomeComponent {
     }
 
     const queryString = new URLSearchParams(params).toString();
+
     this.api.getQuestions(`?${queryString}`).subscribe((data) => {
-      this.questionLists = data.results;
-      console.log(data);
+      this.questionLists.set(data.results);
+      this.currentIndex.set(0); // reset index
     });
+  }
+
+  onAnswerSubmitted(answer: number) {
+    console.log(answer);
+    this.scores.update(value=>value+answer)
+    // const next = this.currentIndex() + 1;
+    // if (next < this.questionLists().length) {
+    //   this.currentIndex.set(next);
+    // } else {
+    //   this.currentIndex.set(-1);
+    //   console.log('Quiz complete!');
+    // }
+  }
+  nextQuestion() {
+    const next = this.currentIndex() + 1;
+    if (next < this.questionLists().length) {
+      this.currentIndex.set(next);
+    } else {
+      this.currentIndex.set(-1);
+      console.log('Quiz complete!');
+    }
   }
 }

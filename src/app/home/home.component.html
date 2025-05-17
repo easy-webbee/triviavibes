@@ -1,8 +1,5 @@
 <label class="">Number Of Questions</label>
-<input
-[(ngModel)]="questions"
-  type="number"
-/>
+<input [(ngModel)]="questions" type="number" />
 <app-select
   [label]="'Select Category'"
   [value]="dataType.triviaCategories[0].label"
@@ -23,8 +20,11 @@
 />
 <button (click)="getQuestion()">start</button>
 
-@for (qs of questionLists; track $index) {
-  <app-card  [question]="qs"/>
+@if ( currentQuestion()) {
+<app-card
+  [question]="currentQuestion()"
+  (answerSubmit)="onAnswerSubmitted($event)"
+/>
 }
-
-
+<button (click)="nextQuestion()">next</button>
+<h2>Scores: {{scores()}}</h2>
